@@ -20,7 +20,7 @@ from pydantic import BaseModel
 from ..backtest.costs import CostModel
 from ..backtest.runner import DEFAULTS as BT_DEFAULTS
 from ..backtest.simulator import Rules, Sizing
-from ..config import JWT_SECRET, SUPABASE_URL
+from ..config import AUTH_MODE, JWT_SECRET, SUPABASE_ANON_KEY, SUPABASE_URL
 from ..db import as_user, service
 from ..engine.base import GLOBAL_DEFAULTS
 from ..engine.indicators import add_standard
@@ -28,7 +28,6 @@ from ..engine.registry import STRATEGIES, default_params
 from ..ingest.derive import load_index_series, load_ohlcv
 from ..jobs import DEFAULT_SETTINGS
 
-AUTH_MODE = "supabase" if os.environ.get("SUPABASE_JWT_SECRET") else "local"
 app = FastAPI(title="PSX Strategy Portal API")
 
 
@@ -79,7 +78,7 @@ def _token(uid: str, email: str) -> str:
 @app.get("/api/config")
 def config():
     return {"auth_mode": AUTH_MODE, "supabase_url": SUPABASE_URL or None,
-            "supabase_anon_key": os.environ.get("SUPABASE_ANON_KEY") or None}
+            "supabase_anon_key": SUPABASE_ANON_KEY or None}
 
 
 @app.post("/api/auth/register")
